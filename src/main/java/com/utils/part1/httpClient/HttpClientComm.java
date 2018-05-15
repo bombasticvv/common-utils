@@ -9,9 +9,12 @@ import java.util.Map.Entry;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -19,23 +22,21 @@ public class HttpClientComm {
 	
 	private int _tmOut = 15000;
 	
-	public String postJson(String url,String jsonParam,Map<String, String> heads,Map<String, String> cookies,String charset) {
-		HttpClient httpClient = new HttpClient();
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(_tmOut);  //设置连接超时
-		httpClient.getParams().setSoTimeout(_tmOut);    //设置读数据超时
+	public String doPostJson(String url,String jsonParam,Map<String, String> heads,Map<String, String> cookies,String charset) {
+		HttpClient client = getHttpClient();
+		PostMethod method = new PostMethod(url);
+		method.setRequestHeader("Content-type", "application/json");
 		
-		PostMethod postMethod = new PostMethod(url);
-		postMethod.setRequestHeader("Content-type", "application/json");
-		setHeaders(postMethod, heads);
-		setCookie(httpClient, cookies);
+		setHeaders(method, heads);
+		setCookie(client, cookies);
+		
 		String resString = "";
-		
 		try {
 			RequestEntity entity=new ByteArrayRequestEntity(jsonParam.getBytes(charset));
-			postMethod.setRequestEntity(entity);
-			int statusCode=httpClient.executeMethod(postMethod);
+			method.setRequestEntity(entity);
+			int statusCode=client.executeMethod(method);
 			if(statusCode==HttpStatus.SC_OK) {
-				byte[] responseBody=postMethod.getResponseBody();
+				byte[] responseBody=method.getResponseBody();
 				resString=new String(responseBody, charset);
 			}else {
 				System.out.println("状态码:"+statusCode);
@@ -50,14 +51,49 @@ public class HttpClientComm {
 		return resString;
 	}
 	
-	private void setHeaders(PostMethod method,Map<String, String> heads) {
+	public String doGet(String url,Map<String, String> param,Map<String, String> heads,Map<String, String> cookies,String charset) {
+		HttpClient client = getHttpClient();
+		GetMethod method = new GetMethod(url);
+		
+		setHeaders(method, heads);
+		setCookie(client, cookies);
+		
+		if(param!=null&&param.size()>0) {
+			NameValuePair[] nameValuePair=new NameValuePair[param.size()];
+			Iterator<Entry<String, String>> it=param.entrySet().iterator();
+			int i=0;
+			while(it.hasNext()) {
+				Entry<String, String> entry=it.next();
+				nameValuePair[i]=new NameValuePair(entry.getKey(), entry.getValue());
+				i++;
+			}
+			method.setQueryString(nameValuePair);
+		}
+		
+		String resString = "";
+		try {
+			int statusCode=client.executeMethod(method);
+			if(statusCode==HttpStatus.SC_OK) {
+				byte[] responseBody=method.getResponseBody();
+				resString=new String(responseBody, charset);
+			}else {
+				System.out.println("状态码:"+statusCode);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return resString;
+	}
+	
+	private void setHeaders(HttpMethod method,Map<String, String> heads) {
 		if(heads==null||heads.isEmpty()) {
 			return;
 		}
 		Iterator<Entry<String, String>> it=heads.entrySet().iterator();
 		while(it.hasNext()) {
 			Entry<String, String> entry=it.next();
-			method.setRequestHeader(entry.getKey(), entry.getValue());
+			method.addRequestHeader(entry.getKey(), entry.getValue());
 		}
 	}
 	
@@ -74,5 +110,12 @@ public class HttpClientComm {
 			cookie.setValue(entry.getValue());
 			state.addCookie(cookie);
 		}
+	}
+	
+	private HttpClient getHttpClient() {
+		HttpClient httpClient = new HttpClient();
+		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(_tmOut);  //设置连接超时
+		httpClient.getParams().setSoTimeout(_tmOut);    //设置读数据超时
+		return httpClient;
 	}
 }
