@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="app" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/home/wallet/logs/wallet-api/app.log" />
+		<param name="DatePattern" value="'-'yyyy-MM-dd'.log'" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss:SSS}]%p [id:%X{id}] %l - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="INFO" />
+			<param name="levelMax" value="FATAL" />
+		</filter>
+	</appender>
+
+	<appender name="apperror" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/home/wallet/logs/wallet-api/apperror.log" />
+		<param name="DatePattern" value="'-'yyyy-MM-dd'.log'" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss:SSS}]%p [id:%X{id}] %l - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="ERROR" />
+			<param name="levelMax" value="FATAL" />
+		</filter>
+	</appender>
+
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<!-- 设置监视器输出方式 -->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%d{yyyy-MM-dd HH:mm:ss:SSS}]%p [id:%X{id}] %l - %m%n" />
+		</layout>
+		<!--滤镜设置输出的级别-->
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="DEBUG" />
+			<param name="levelMax" value="FATAL" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+	<!--通过<logger></logger>的定义可以将各个包中的类日志输出到不同的日志文件中-->
+
+	<!-- 屏蔽日志 -->
+	<logger name="org.springframework">
+		<level value="WARN" />
+	</logger>
+	<logger name="httpclient.wire.header">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.apache.commons.httpclient">
+		<level value="WARN" />
+	</logger>
+	<logger name="java.sql">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.hibernate">
+		<level value="WARN" />
+	</logger>
+
+	<root><!-- 设置接收所有输出的通道 -->
+		<priority value="info" />
+		<appender-ref ref="app" /><!-- 与前面的appender name 相对应 -->
+		<appender-ref ref="apperror" /><!-- 与前面的appender name 相对应 -->
+		<appender-ref ref="stdout" />
+	</root>
+</log4j:configuration>  
