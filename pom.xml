@@ -25,6 +25,11 @@
 		    <artifactId>httpclient</artifactId>
 		    <version>4.5.5</version>
 		</dependency>
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>6.0.6</version>
+		</dependency>
   	</dependencies>
   	
   	<!-- 指定maven编译所使用的编码 ,否则会使用系统默认编码-->
