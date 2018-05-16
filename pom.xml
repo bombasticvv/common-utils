@@ -15,6 +15,11 @@
 		    <artifactId>commons-httpclient</artifactId>
 		    <version>3.1</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.5</version>
+		</dependency>
   	</dependencies>
   	
   	<!-- 指定maven编译所使用的编码 ,否则会使用系统默认编码-->
