@@ -3,7 +3,7 @@
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
 	<appender name="app" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/wallet/logs/wallet-api/app.log" />
+		<param name="File" value="D://logs/log.log" />
 		<param name="DatePattern" value="'-'yyyy-MM-dd'.log'" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern"
@@ -16,7 +16,7 @@
 	</appender>
 
 	<appender name="apperror" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/wallet/logs/wallet-api/apperror.log" />
+		<param name="File" value="D://logs/error.log" />
 		<param name="DatePattern" value="'-'yyyy-MM-dd'.log'" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern"
